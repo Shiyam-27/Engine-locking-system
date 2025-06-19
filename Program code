@@ -1,0 +1,37 @@
+// Pin Assignments
+const int mq3Pin = A0;       // MQ3 Alcohol Sensor
+const int relayPin = 8;      // Relay controlling the motor
+const int buzzerPin = 7;     // Buzzer
+
+// Alcohol threshold value (adjust based on testing)
+const int alcoholThreshold = 450;
+
+void setup() {
+    pinMode(mq3Pin, INPUT);
+    pinMode(relayPin, OUTPUT);
+    pinMode(buzzerPin, OUTPUT);
+
+    // Default State (Motor ON, Buzzer OFF)
+    digitalWrite(relayPin, HIGH);  // NC -> Motor ON
+    digitalWrite(buzzerPin, LOW);  // Buzzer OFF
+
+    Serial.begin(9600);            // Serial monitor for debugging
+}
+
+void loop() {
+    int alcoholValue = analogRead(mq3Pin);  // Read alcohol sensor value
+    Serial.print("Alcohol Level: ");
+    Serial.println(alcoholValue);  // Print for debugging
+
+    if (alcoholValue > alcoholThreshold) {
+        digitalWrite(relayPin, LOW);   // Stop motor when alcohol is detected
+        digitalWrite(buzzerPin, HIGH); // Beep Buzzer
+        delay(2000);                   // Beep duration
+        digitalWrite(buzzerPin, LOW);  // Turn off buzzer
+    } else {
+        digitalWrite(relayPin, HIGH);  // Motor ON (NC Mode)
+        digitalWrite(buzzerPin, LOW);  // Buzzer OFF
+    }
+
+    delay(500); // Stability delay
+}
